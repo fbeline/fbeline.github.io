@@ -1,0 +1,21 @@
+# ----------- CONFIGURABLE START -----------
+title:            "Felipe Beline's blog"
+description:      "Personal notes."
+url:              http://blog.fbeline.com
+signoff:          "Felipe Beline Baravieira"
+google_analytics: # Set tracking, remove from /javascripts/basic.js if unwanted.
+share:            false # Turn on twitter and facebook share buttons
+
+links:
+  - name:         Posts
+    url:          /
+    external:     false
+  - name:         About me
+    url:          /about
+    external:     false
+# ------------ CONFIGURABLE END ------------
+
+permalink:        /posts/:title
+defaults:
+  - values:
+      layout: "default"
