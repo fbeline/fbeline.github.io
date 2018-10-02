@@ -1,5 +1,6 @@
 ---
 title: Generative testing
+description: Generative testing with Clojure.
 date: 2018-10-02 00:44:00
 ---
 

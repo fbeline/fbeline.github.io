@@ -1,5 +1,6 @@
 ---
 title: Functional Programming
+description: Functional Programming core concepts.
 date: 2018-02-18 15:27:31
 ---
 
