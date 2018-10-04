@@ -33,6 +33,10 @@ To illustrate the usage of generative testing and how powerful it is, we will im
 Now let's define the properties that our functions should hold. In that case, the decryption of an encrypted message should match the original text.
 
 ```clojure
+(require '[clojure.test.check :as tc]
+         '[clojure.test.check.generators :as gen]
+         '[clojure.test.check.properties :as prop])
+
 (def caesar-cipher-property
   (prop/for-all [v gen/string-alphanumeric
                  n gen/int]
