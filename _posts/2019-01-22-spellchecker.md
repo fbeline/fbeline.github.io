@@ -12,7 +12,7 @@ First of all, we need a way to tell how similar one string is from another, for 
 
 - Hamming distance
 - Levenshtein distance
-- (Full) Damerau-Levenshtein distance
+- Damerau-Levenshtein distance
 - Optimal String Alignment
 - Longest Common Substring distance
 - q-gram distance
@@ -180,6 +180,10 @@ It took 8.472s to build the BK-Tree with 985563 nodes and process a file with 17
 
 _Obs: In Haskell, the expressions are not evaluated when they are bound. Because of that, the execution time drops considerably when analyzing smaller texts. For example, it should not take much more than one second to check a single word as just a tiny part of the Tree will be built in the process._
 
-## Optimizations
+## Possible Optimizations
+
+- Save the in-memory BK-Tree to disk in a binary format. Avoiding transversing the Tree and calculating the distance between nodes at every program startup.
+
+- Use SymSpell instead of BK-Tree as it claims to be 1,870 times faster. Just note that it seems to take more time to build the SymSpell Tree, and may not worth the faster lookup as the startup time is the bottleneck for our command line spellchecker.
 
 ## Wrap up
