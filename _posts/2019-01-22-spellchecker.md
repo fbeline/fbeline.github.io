@@ -187,3 +187,9 @@ _Obs: In Haskell, the expressions are not evaluated when they are bound. Because
 - Use SymSpell instead of BK-Tree as it claims to be 1,870 times faster. Just note that it seems to take more time to build the SymSpell Tree, and may not worth the faster lookup as the startup time is the bottleneck for our command line spellchecker.
 
 ## Wrap up
+
+As said in the beginning, to create a spellchecker, technical decisions around algorithms and data structures had to be made. Those decisions had an impact on time and space complexity of the program.
+
+To achieve a more desirable correction suggestion, you will need a good dictionary. Without one, the program will almost always suggest nonsense words. A simple set of words will not do much; it is important to understand the dictionary words relevance too.
+
+In the end, we achieved a naive solution as we had just scratched the surface of spellchecking. I wish that this post serves for you as an introduction to the subject.
