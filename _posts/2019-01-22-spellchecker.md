@@ -159,13 +159,11 @@ _Using Levenshtein function from [text-metrics](https://hackage.haskell.org/pack
 
 Now we should be able to run our command line application. Follows some examples:
 
-- Output
-
 ```bash
 » echo "Testando o correror ortografico." | spell-checker
 [("correror",["corredor","corretor"]),("ortografico",["ortográfico"])]
 ```
-- Total Time
+### Execution Time
 
 ```bash
 » wc input.txt
