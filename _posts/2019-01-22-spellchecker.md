@@ -1,14 +1,14 @@
 ---
-title: Building a Spell Checker
+title: Creating a Spell Checker
 description: Creating a command line Spell Checker application.
 date: 2019-01-22 00:44:00
 ---
 
-In this article, we will implement a command line Spell Checker in Haskell and cover the basics over how to suggest corrections. We will see that it can be done using different techniques and how those choices critically impact on the suggestion accuracy and performance.
+In this article, we will implement a command line Spell Checker in Haskell and cover the basics concepts over how to suggest corrections. We will see that it can be done using different techniques and how those choices critically impact on the suggestion accuracy and performance.
 
 ## String distance algorithms
 
-First of all, we need a way to tell how similar one string is from another, for example, using the Levenshtein distance algorithm `cat` and `rat` distance is 1. Several algorithms approach this problem in different ways:
+First of all, we need a way to mesure how similar one string is from another, for example, using the Levenshtein distance algorithm `cat` and `rat` distance is 1. Several algorithms approach this problem in different ways:
 
 - Hamming distance
 - Levenshtein distance
@@ -21,22 +21,22 @@ First of all, we need a way to tell how similar one string is from another, for 
 - Jaro distance
 - Jaro-Winkler distance
 
-For this project, we will use the Levenshtein distance, that is probably one of the most famous and straightforward algorithms in this category. The Levenshtein distance is the minimum number of single-character edits (i.e., insertions, deletions or substitutions) required to change one word into the other. So, in the previous example to transform `cat` in `rat` we only need to substitute the first character from `c` to `r`, and that is why the distance is 1.
+For this project, we will use the Levenshtein distance, that is probably one of the most famous and straightforward algorithms in this category. The Levenshtein distance is the minimum number of single-character edits (i.e., insertions, deletions or substitutions) required to change one word into the other. In the previous example, to transform `cat` in `rat` we only need to substitute the first character from `c` to `r`, and that is why the distance is 1.
 
 ## Searching for near-matches Strings
 
 Now that we can metrify how distant one string is from another, we need a way to go over our dictionary and suggest possible corrections.
 
-The problem is that brute forcing a dictionary with a million of words to find near-matches can take some time, just imagine if we had to calculate the distance between two different words a million times and then filter the ones that has the distance below or equal N.
+The problem is that brute forcing a dictionary with a million of words to find near-matches can take some time, just imagine if we had to calculate the word distance against the entire dictionary and then filter the ones that have the distance below or equal to N.
 
-So to escape from a linear complexity, we should keep our dictionary in the smartest form as possible. To solve that we have some options:
+So to escape from a linear complexity, we should maintain our dictionary in the smartest structure as possible. To solve that we have some options:
 
-- BK-tree
+- BK-Tree
 - Norving
 - LinSpell
 - SymSpell
 
-We are going to use the BK-tree, as it is efficient enough for our purpose. BK-Trees or Burkhard-Keller Trees is a tree-based data structure commonly used for quickly finding near-matches to a string. As many articles already cover this topic, I will recommend one and left here my implementation.
+We are going to use the BK-Tree, as it is efficient enough for our purpose. BK-Trees or Burkhard-Keller Trees is a tree-based data structure commonly used for quickly finding near-matches to a string. As many articles already cover this topic, I will recommend [one](https://signal-to-noise.xyz/post/bk-tree/) and left here my implementation.
 
 ```haskell
 module BkTree 
@@ -91,11 +91,11 @@ lookup input (Node value children) =
                             Just x -> BkTree.lookup input x
 ```
 
-_Obs: Try to insert the elements in the tree ordered by word relevance, in that way you will get better accuracy as these words will be nearest to the root._
+_Try to insert the elements in the tree ordered by word relevance, in that way you will get better accuracy as these words will be nearest to the root._
 
 ## Loading the dictionary
 
-Now the missing part is the dictionary; you can pick one from the LibreOffice project [here](https://cgit.freedesktop.org/libreoffice/dictionaries/plain/). With the dictionary file in hands, we only need to load it in memory and build the BK-tree.
+Now the missing part is the dictionary; you can pick one from the LibreOffice project [here](https://cgit.freedesktop.org/libreoffice/dictionaries/plain/). With the dictionary file in hands, we only need to load it in memory and build the BK-Tree.
 
 ```haskell
 module Main where
@@ -119,7 +119,7 @@ main = do
 
 ## Finding typos and suggesting words
 
-You could argue that for precise matches creating a HashSet from the dictionary could have a better performance than trying to find it in the BK-tree, and that is true, but the time that takes to build a HashSet with almost a million of Strings is significant, so for a command line spellchecker is just  faster to search in the BK-tree for a node with distance of 0.
+You could argue that for precise matches creating a HashSet from the dictionary could have a better performance than trying to find it in the BK-Tree, and that is true, but the time that takes to build a HashSet with almost a million of Strings is significant, so for a command line spellchecker is just faster to search in the BK-Tree for a node with distance of 0.
 
 ```haskell
 module Main where
@@ -151,9 +151,9 @@ main = do
   print $ map (guess tree) (spellCheck content tree)
 ```
 
-In the code above we create a list of words from the input, and then for each one, we check if it exists in the dictionary. For the words that could not be found we search three possible corrections that are at a maximum distance of 1.
+In the code above we create a list of words from the input, and then for each word we check if it exists in the dictionary. For the words that could not be found we search three possible corrections that are at a maximum distance of 1.
 
-Note that we are using the Levenshtein function from the [text-metrics](https://hackage.haskell.org/package/text-metrics)  package.
+_Using Levenshtein function from [text-metrics](https://hackage.haskell.org/package/text-metrics) package._
 
 ## Running the application
 
@@ -178,13 +178,13 @@ spell-checker-exe  11,38s user 4,23s system 184% cpu 8,472 total
 
 It took 8.472s to build the BK-Tree with 985563 nodes and process a file with 1776 words. Note that the most time consuming part of this process is to build the Tree.
 
-_Obs: In Haskell, the expressions are not evaluated when they are bound. Because of that, the execution time drops considerably when analyzing smaller texts. For example, it should not take much more than one second to check a single word as just a tiny part of the Tree will be built in the process._
+_In Haskell, the expressions are not evaluated when they are bound. Because of that, the execution time drops considerably when analyzing smaller texts. For example, it should not take much more than one second to check a single word as just a tiny part of the Tree will be built in the process._
 
 ## Possible Optimizations
 
 - Save the in-memory BK-Tree to disk in a binary format. Avoiding transversing the Tree and calculating the distance between nodes at every program startup.
 
-- Use SymSpell instead of BK-Tree as it claims to be 1,870 times faster. Just note that it seems to take more time to build the SymSpell Tree, and may not worth the faster lookup as the startup time is the bottleneck for our command line spellchecker.
+- Use SymSpell instead of BK-Tree as it claims to be 1,870 times faster. A downside is that the SymSpell algorithm seems to take more time to build the Tree and may not worth the faster lookup as the startup time is the bottleneck for our command line spellchecker.
 
 ## Wrap up
 
